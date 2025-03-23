@@ -165,29 +165,39 @@ public class CharacterData {
 		 //characterData.stats
 	 }
 	 static void modifystats (CharacterData characterData, String content, ServerData serverData, MessageReceivedEvent event, PlayerData playerData) {
+		
 		 content = content.toLowerCase();
 		 for (String stat : serverData.stats) {
+			 System.out.println(stat);
 	    	 String regex = (stat.toLowerCase()) + ".*?:\\s*(\\d+)";
 	         Pattern pattern = Pattern.compile(regex);
 	         Matcher matcher = pattern.matcher(content);
 	         if (matcher.find()) {  // Find the first match
 	             // Extract the number from the capturing group
+	        	
 	             characterData.stats.put(stat, Integer.valueOf(matcher.group(1)));
 	    }
 	      
 	}
-		 String regex = "exp" + ".*?:\\s*(\\d+)";
+		 String regex = "current hp" + ".*?:\\s*(\\d+)";
          Pattern pattern = Pattern.compile(regex);
          Matcher matcher = pattern.matcher(content);
          if (matcher.find()) {  // Find the first match
              // Extract the number from the capturing group
-             characterData.EXP = Integer.valueOf(matcher.group(1));}
-         String regex1 = "level" + ".*?:\\s*(\\d+)";
+             characterData.stats.put("Current HP", Integer.valueOf(matcher.group(1)));}
+         
+		 String regex1 = "exp" + ".*?:\\s*(\\d+)";
          Pattern pattern1 = Pattern.compile(regex1);
          Matcher matcher1 = pattern1.matcher(content);
          if (matcher1.find()) {  // Find the first match
              // Extract the number from the capturing group
-             characterData.Level = Integer.valueOf(matcher1.group(1));}
+             characterData.EXP = Integer.valueOf(matcher1.group(1));}
+         String regex11 = "level" + ".*?:\\s*(\\d+)";
+         Pattern pattern11 = Pattern.compile(regex11);
+         Matcher matcher11 = pattern11.matcher(content);
+         if (matcher11.find()) {  // Find the first match
+             // Extract the number from the capturing group
+             characterData.Level = Integer.valueOf(matcher11.group(1));}
          
 		 Misc.sm("Stats have been updated", event);
 		 calculateHP(characterData, serverData);

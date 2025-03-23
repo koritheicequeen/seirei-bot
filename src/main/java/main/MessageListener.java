@@ -98,6 +98,12 @@ public class MessageListener extends ListenerAdapter{
         }
         
         if (serverData.character) {
+        	if (command.equals("damage") && !A) {
+        		CharacterData.modifystats(characterData, "Current HP: "+Integer.valueOf(characterData.stats.get("Current HP") - Integer.valueOf(parts.get(0))).toString(), serverData, event, playerData);
+        	}
+        	if (command.equals("heal")) {
+        		CharacterData.modifystats(characterData, "Current HP: "+Integer.valueOf(characterData.stats.get("Current HP") + Integer.valueOf(parts.get(0))).toString(), serverData, event, playerData);
+        	}
         	if (command.equals("avatar")) {
         		CharacterData.avatar(characterData, event);
         	}
@@ -307,6 +313,7 @@ public class MessageListener extends ListenerAdapter{
        if (command.equals("image")) {            
     	   System.out.println(ImageClass.imageRetrieval(event.getMessage(), event, characterData));
        }
+       
         	}
         
         	
