@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main extends ListenerAdapter {
-	 static final String token = "";
+	 static final String token = System.getenv("DISCORD_BOT_TOKEN");;
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 

@@ -214,7 +214,7 @@ public class CharacterData {
 					pages.add(entry);
 				}
 					
-			
+			//TODO buttons
 			List<Button> buttons = ButtonListener.turnPageAbility(playerData);
 			event.getChannel().sendMessageEmbeds(Misc.createEmbed(pages.get(0).getKey(), pages.get(0).getValue())).setActionRow(buttons).queue();
 		             
@@ -223,7 +223,7 @@ public class CharacterData {
 	   }
 	 static void characterModification(CharacterData characterData, MessageReceivedEvent event, String message, ServerData serverData) {
 		   for (String cdata : serverData.cData) {
-		    	 String regex = Misc.capitalize(cdata) + ".*?:\\s*(.*)";
+		    	 String regex = (cdata).toLowerCase() + ".*?:\\s*(.*)";
 		         Pattern pattern = Pattern.compile(regex);
 		         Matcher matcher = pattern.matcher(message);
 		         if (matcher.find()) {  // Find the first match

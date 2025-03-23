@@ -150,7 +150,7 @@ public class MessageListener extends ListenerAdapter{
           		}
         	   CharacterData.select(Integer.valueOf(parts.get(0)), playerData);
            }
-           if (command.equals("alocate")&&(!A)) {
+           if (command.equals("allocate")&&(!A)) {
         	   CharacterData.allocate(characterData, serverData, content, playerData);
            }
            if (command.equals("setStats")&&(Misc.isModerator(self.getId(), self, serverData))) {
