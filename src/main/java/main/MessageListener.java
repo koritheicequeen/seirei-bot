@@ -33,14 +33,18 @@ public class MessageListener extends ListenerAdapter{
 	
 	@Override
     public void onMessageReceived(MessageReceivedEvent event) {
-		
+		loadUserData();
+		  if (serverDataMap == null) {
+              serverDataMap = new LinkedHashMap<>();
+          }
+		  
 		
 		if (event.getAuthor().isBot()) return;
 		
 		content = event.getMessage().getContentRaw();
 		
 		if (!event.isFromGuild()) return;
-		loadUserData();
+		
 		
 		String serverId = event.getGuild().getId();
 		this.serverData = serverDataMap.get(serverId);
@@ -206,7 +210,7 @@ public class MessageListener extends ListenerAdapter{
            	}
            	
         	if (command.equals("econenable")&&(Misc.isModerator(self.getId(), self, serverData))) {
-        		EconomicData.enable(parts.get(0), parts.get(1), event, serverData);
+        		EconomicData.enable(parts.get(0), true, event, serverData);
         	}
         	if (command.equals("currency")&&(Misc.isModerator(self.getId(), self, serverData))) {
         		EconomicData.changeCurrency(parts.get(0), event, serverData);
@@ -315,10 +319,10 @@ public class MessageListener extends ListenerAdapter{
        
         	}
         
-        	
+        	saveUserData();
         
         
-		saveUserData();
+	
 	}
 
 	

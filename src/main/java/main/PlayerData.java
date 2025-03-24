@@ -134,10 +134,11 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
 	    if (serverData.abilityName!=null) {
 	    for (String abilityType : serverData.abilityName) {
 	    	String abilityName = null;
-	    	 String regex = Misc.capitalize(abilityType) + ".*?:\\s*(.*)";
+	    	 String regex = (abilityType) + ".*?:\\s*(.*)";
 	         Pattern pattern = Pattern.compile(regex);
 	         Matcher matcher = pattern.matcher(text);
 	         if (matcher.find()) {  // Find the first match
+	        	 System.out.println(matcher.group());
 	             // Extract the number from the capturing group
 	           abilityName = matcher.group(1);
    
