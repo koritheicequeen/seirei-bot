@@ -33,7 +33,7 @@ public class MessageListener extends ListenerAdapter{
 	
 	@Override
     public void onMessageReceived(MessageReceivedEvent event) {
-		loadUserData();
+		//loadUserData();
 		  if (serverDataMap == null) {
               serverDataMap = new LinkedHashMap<>();
           }
@@ -319,7 +319,7 @@ public class MessageListener extends ListenerAdapter{
        
         	}
         
-        	saveUserData();
+        	//saveUserData();
         
         
 	

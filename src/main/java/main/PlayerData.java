@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -138,13 +139,14 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
 	         Pattern pattern = Pattern.compile(regex);
 	         Matcher matcher = pattern.matcher(text);
 	         if (matcher.find()) {  // Find the first match
-	        	 System.out.println(matcher.group());
 	             // Extract the number from the capturing group
 	           abilityName = matcher.group(1);
-   
-	        text.replace(serverData.abilityName + ":", "");
+	        text.replace(abilityType + ":", "");
 	        text.replace(abilityName, "");
-	           characterData.abilities.put(abilityName, text);
+	       
+	           characterData.abilities.put(abilityName, text); 
+	          
+	           
 	         }
 	    }}
 	    StringBuilder send = new StringBuilder();
