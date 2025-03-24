@@ -45,14 +45,15 @@ public class EconomicData {
 		Misc.sm("currency had been updated", event);
 	}
 	static void enable (String type, String yesOrNo, MessageReceivedEvent event, ServerData serverData) {
+		
 		type =type.toLowerCase();
 		yesOrNo = yesOrNo.toLowerCase();
-		Boolean check = null;
+		Boolean check;
 		if (yesOrNo.equals("yes") || yesOrNo.equals("on") || yesOrNo.equals("enable")) {
 			check = true;
 		} else if (yesOrNo.equals("no") || yesOrNo.equals("off") || yesOrNo.equals("disable")) {
 			check = false;
-		}
+		} else check = null;
 		if (check == null) {
 			event.getChannel().sendMessage("please specify on or off").queue();
 			return;

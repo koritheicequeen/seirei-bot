@@ -69,7 +69,7 @@ PlayerData deletedCharacterHolder;
 		
 	}
 	void abilityNameChange (String name, MessageReceivedEvent event) {
-		this.abilityName.add(Misc.capitalize(name));
+		this.abilityName.add((name));
 	}
 	void changeRole (String rolename, MessageReceivedEvent event, ServerData serverData, Guild server) {
 		List<Role> roles = server.getRolesByName(rolename, true);
@@ -111,7 +111,7 @@ PlayerData deletedCharacterHolder;
 	}
 	void modifyCData(String part1, String part2, MessageReceivedEvent event, ServerData serverData) {
 		if (part1.toLowerCase().equals("remove")) {
-			if (cData.contains(Misc.capitalize(part2))) {
+			if (cData.contains((part2))) {
 			cData.remove((part2));
 			for (Entry<String, PlayerData> entry : serverData.playerDatas.entrySet()) {
 				PlayerData playerData = entry.getValue();

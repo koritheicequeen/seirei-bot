@@ -35,7 +35,6 @@ public class MessageListener extends ListenerAdapter{
     public void onMessageReceived(MessageReceivedEvent event) {
 		
 		
-		
 		if (event.getAuthor().isBot()) return;
 		
 		content = event.getMessage().getContentRaw();
