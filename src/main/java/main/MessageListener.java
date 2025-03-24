@@ -254,7 +254,7 @@ public class MessageListener extends ListenerAdapter{
         		  serverData.modifyCData(parts.get(0),segments.get(1) , event, serverData);
         	  }else serverData.modifyStats(parts.get(0), parts.get(1), event, serverData);
         	  
-        } if (command.equals("abilityName")&&(Misc.isModerator(self.getId(), self, serverData))) {
+        } if (command.equals("abilityname")&&(Misc.isModerator(self.getId(), self, serverData))) {
         	 if (segments.size()>1) {
         		 serverData.abilityNameChange(segments.get(1), event);
         	 }else 
