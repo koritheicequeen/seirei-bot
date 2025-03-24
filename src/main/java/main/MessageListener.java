@@ -69,9 +69,11 @@ public class MessageListener extends ListenerAdapter{
         }
       ;
       String command = par[0]; 
-      
+      if (!command.contains(serverData.prefix))
+    	   return;
         characterData = Misc.characterCheck(content,targetMember, event, serverData, this);
         if (characterData == null) {
+        	Misc.sm("could not find character", event);
         	return;
         }
        for (String part : par) {
@@ -81,8 +83,7 @@ public class MessageListener extends ListenerAdapter{
        }
 		List<String> segments = Misc.splitByQuotes(content);
        
-       if (!command.contains(serverData.prefix))
-    	   return;
+       
         command = command.toLowerCase().replace(serverData.prefix, "");
        
         content = content.replace(serverData.prefix, "");

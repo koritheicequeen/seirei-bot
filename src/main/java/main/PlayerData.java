@@ -95,11 +95,11 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
          Matcher matcher = pattern.matcher(text);
         
          if (matcher.find()) {  // Find the first match
-            text.replace("Character #:" + matcher.group(1), ""); // Extract the number from the capturing group
+           text = text.replace("Character #:" + matcher.group(1), ""); // Extract the number from the capturing group
         characterData = playerData.characterData.get(Integer.valueOf(matcher.group(1).trim())-1);
        
           
-	 } }
+	 }else  characterData = playerData.characterData.get(0);}
 		 if (characterData==null) {
         	characterData = new CharacterData(playerData.UserId, serverData);
         	playerData.characterData.add(characterData);
