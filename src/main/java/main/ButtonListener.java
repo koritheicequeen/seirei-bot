@@ -112,7 +112,7 @@ public class ButtonListener extends ListenerAdapter{
 	        	 EmbedBuilder updatedEmbed2 = new EmbedBuilder()
 	                     .setTitle(characterData2.pages.get(characterData2.pagecount).getKey())
 	                     .setDescription(characterData2.pages.get(characterData2.pagecount).getValue())
-	                     .setColor(Color.CYAN);
+	                     .setColor(Color.BLACK);
 	        	 event.editMessageEmbeds(updatedEmbed2.build());
 	        	break;
 	        case "rightpageability":
@@ -124,7 +124,7 @@ public class ButtonListener extends ListenerAdapter{
 	        	 EmbedBuilder updatedEmbed3 = new EmbedBuilder()
 	                     .setTitle(characterData3.pages.get(characterData3.pagecount).getKey())
 	                     .setDescription(characterData3.pages.get(characterData3.pagecount).getValue())
-	                     .setColor(Color.CYAN);
+	                     .setColor(Color.BLACK);
 	        	 event.editMessageEmbeds(updatedEmbed3.build());
 	        	break;
 	        
