@@ -1,6 +1,7 @@
 package main;
 
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,8 +10,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import net.dv8tion.jda.api.entities.Member;
@@ -315,8 +319,6 @@ public class MessageListener extends ListenerAdapter{
        
         	}
         
-        	saveUserData();
-        
         
 	
 	}
@@ -326,23 +328,65 @@ public class MessageListener extends ListenerAdapter{
 	 static void saveUserData() {
 	        try (FileWriter writer = new FileWriter(DATA_FILE)) {
 	            new Gson().toJson(serverDataMap, writer);
+	            writer.flush();
 	        } catch (IOException e) {
 	            e.printStackTrace();
 	        }
 	 }
-	  static void loadUserData() {
-	        try (FileReader reader = new FileReader(DATA_FILE)) {
-	            Type userDataType = new TypeToken<Map<String, ServerData>>() {}.getType();
-	            serverDataMap = new Gson().fromJson(reader, userDataType);
-	            
-	            if (serverDataMap == null) {
-	                serverDataMap = new LinkedHashMap<>();
-	            }
-	        } catch (IOException e) {
-	            serverDataMap = new LinkedHashMap<>();
-	            
-	            e.printStackTrace();
-	        }
-	  }
-}
+	 static void loadUserData() {
+		    try (FileReader reader = new FileReader(DATA_FILE)) {
+		      
+		    	//Type userDataType = new TypeToken<Map<String, ServerData>>() {}.getType();
+		    	System.out.println("raw json \n" + reader);
+		    	Gson gson = new GsonBuilder()
+		    		    .registerTypeAdapter(Map.Entry.class, new MapEntryAdapter())
+		    		    .create();
+		    	serverDataMap = gson.fromJson(reader, new TypeToken<Map<String, ServerData>>() {}.getType());
+		     //   serverDataMap = new Gson().fromJson(reader, userDataType);
+
+		        if (serverDataMap == null) {
+		            serverDataMap = null;
+		        }
+		    } catch (FileNotFoundException e1) {
+		        System.out.println("File not found: " + DATA_FILE);
+		        e1.printStackTrace();
+		        serverDataMap = new LinkedHashMap<>();
+		    } catch (JsonSyntaxException e) {
+		        System.out.println("JSON syntax error: " + e.getMessage());
+		        e.printStackTrace();
+		        serverDataMap = new LinkedHashMap<>();
+		    } catch (IOException e1) {
+		        System.out.println("I/O error when reading the file");
+		        e1.printStackTrace();
+		        serverDataMap = new LinkedHashMap<>();
+		    }catch (UnsupportedOperationException e3) {
+		    	e3.printStackTrace();
+		    	System.err.println("error: " + e3.getMessage());
+	 		}
+		  
+		    		 
+		    	 
+		    
+		}}
+
+	 
+//	  static void loadUserData() {
+//	        try (FileReader reader = new FileReader(DATA_FILE)) {
+//	            Type userDataType = new TypeToken<Map<String, ServerData>>() {}.getType();
+//	            Gson gson = new GsonBuilder()
+//	                    .serializeNulls()  // Optional: include nulls in the serialized output
+//	                    .create();
+//	            serverDataMap = gson.fromJson(reader, userDataType);
+//	            
+//	            if (serverDataMap == null) {
+//	                serverDataMap = new LinkedHashMap<>();
+//	            }
+//	        } catch (IOException e) {
+//	            serverDataMap = new LinkedHashMap<>();
+//	            
+//	            e.printStackTrace();
+//	        }
+//	  }
+
+	 
 
