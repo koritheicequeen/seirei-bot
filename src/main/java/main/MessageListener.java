@@ -33,7 +33,7 @@ public class MessageListener extends ListenerAdapter{
 	
 	@Override
     public void onMessageReceived(MessageReceivedEvent event) {
-		//loadUserData();
+		loadUserData();
 		  if (serverDataMap == null) {
               serverDataMap = new LinkedHashMap<>();
           }
@@ -335,7 +335,7 @@ public class MessageListener extends ListenerAdapter{
 	            e.printStackTrace();
 	        }
 	 }
-	  private void loadUserData() {
+	  static void loadUserData() {
 	        try (FileReader reader = new FileReader(DATA_FILE)) {
 	            Type userDataType = new TypeToken<Map<String, ServerData>>() {}.getType();
 	            serverDataMap = new Gson().fromJson(reader, userDataType);

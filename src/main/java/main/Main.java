@@ -33,6 +33,7 @@ public class Main extends ListenerAdapter {
         
         logger.info("Token successfully retrieved");
       startBot();
+      MessageListener.loadUserData();
 
     }
     @Override
