@@ -1,8 +1,17 @@
 package main;
 
 
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
 import javax.imageio.spi.IIORegistry;
 import javax.security.auth.login.LoginException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDA.Status;
 import net.dv8tion.jda.api.JDABuilder;
@@ -11,14 +20,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Main extends ListenerAdapter {
 	 static final String token = System.getenv("DISCORD_BOT_TOKEN");;
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    static JDA jda;
+    static boolean reconnecting = false;
 
     public static void main(String[] args) throws LoginException {
        
@@ -36,29 +44,52 @@ public class Main extends ListenerAdapter {
 
     }
     @Override
-    public void onStatusChange(StatusChangeEvent event) {
-    	
-        if (event.getNewStatus() == Status.DISCONNECTED) {
-        	  while (true) {
-              	try {
-              		 startBot(); 
-              		 return;
-              	} catch (Exception e) {
-              		
-              		System.err.println("Bot crashed! Restarting in 10 seconds...");
-              		try {
-              			Thread.sleep(10000);}
-              		catch (InterruptedException ignored) {}
-              		
-              	}
-              }
+  
+    	public void onStatusChange(StatusChangeEvent event) {
+    	    if (event.getNewStatus() == Status.DISCONNECTED) {
+    	        if (!reconnecting) {
+    	            reconnecting = true;  // Prevent multiple loops
+    	            new Thread(() -> {
+    	                while (true) {
+    	                    if (isInternetAvailable()) {
+    	                        try {
+    	                            startBot();
+    	                            break;  // Exit the loop once the bot restarts
+    	                        } catch (Exception e) {
+    	                            System.err.println("Bot crashed! Restarting in 10 seconds...");
+    	                            try {
+										Thread.sleep(10000);
+									} catch (InterruptedException e1) {
+										
+										e1.printStackTrace();
+									}
+    	                        }
+    	                    }
+    	                    try {
+    	                    	System.err.println("Wifi not available, trying again in 10 seconds");
+    	                        Thread.sleep(10000);
+    	                    } catch (InterruptedException ignored) {}
+    	                }
+    	                reconnecting = false;  // Allow future reconnects
+    	            }).start();
+    	        }
+    	    }
+    	}
+    public static boolean isInternetAvailable() {
+      
+       try (Socket socket = new Socket()) {
+                socket.connect(new InetSocketAddress("8.8.8.8", 53), 3000);
+                return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
     public static void startBot() {
     	MessageListener.loadUserData();
-    	@SuppressWarnings("unused")
-		JDA jda = JDABuilder.createDefault(token)
+    	if (jda != null) jda.shutdownNow();
+       
+		jda = JDABuilder.createDefault(token)
                 .addEventListeners(new MessageListener())
                 .addEventListeners(new ButtonListener())
     			.addEventListeners( new Main())
