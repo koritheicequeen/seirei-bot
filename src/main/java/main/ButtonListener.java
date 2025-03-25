@@ -86,7 +86,7 @@ public class ButtonListener extends ListenerAdapter{
                 .setDescription(playerData.pages.get(playerData.selectedChar))
                 .setColor(Color.BLUE);
 	        	
-	        	 if (!characterData1.Avatar.equals(null) && !characterData1.Avatar.isEmpty()) {
+	        	 if (characterData1.Avatar!=null && !characterData1.Avatar.isEmpty()) {
 	        	     	try (InputStream is = ImageClass.downloadImage(characterData1.Avatar)) {  
 	        	     		
 	        	     		
@@ -113,7 +113,8 @@ public class ButtonListener extends ListenerAdapter{
 	                     .setTitle(characterData2.pages.get(characterData2.pagecount).getKey())
 	                     .setDescription(characterData2.pages.get(characterData2.pagecount).getValue())
 	                     .setColor(Color.BLACK);
-	        	 event.editMessageEmbeds(updatedEmbed2.build());
+	        	 event.editMessageEmbeds(updatedEmbed2.build()).queue();;
+	        	 
 	        	break;
 	        case "rightpageability":
 	        	CharacterData characterData3 = playerData.characterData.get( playerData.selectedChar);
@@ -125,7 +126,7 @@ public class ButtonListener extends ListenerAdapter{
 	                     .setTitle(characterData3.pages.get(characterData3.pagecount).getKey())
 	                     .setDescription(characterData3.pages.get(characterData3.pagecount).getValue())
 	                     .setColor(Color.BLACK);
-	        	 event.editMessageEmbeds(updatedEmbed3.build());
+	        	 event.editMessageEmbeds(updatedEmbed3.build()).queue();;
 	        	break;
 	        
 	        	

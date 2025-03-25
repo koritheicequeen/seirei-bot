@@ -22,7 +22,6 @@ public class Main extends ListenerAdapter {
 
     public static void main(String[] args) throws LoginException {
        
-        System.out.println(token);
        
         if (token == null || token.isEmpty()) {
             logger.error("Token is not set. Please set the DISCORD_BOT_TOKEN environment variable.");
@@ -33,11 +32,12 @@ public class Main extends ListenerAdapter {
         
         logger.info("Token successfully retrieved");
       startBot();
-      MessageListener.loadUserData();
+      
 
     }
     @Override
     public void onStatusChange(StatusChangeEvent event) {
+    	
         if (event.getNewStatus() == Status.DISCONNECTED) {
         	  while (true) {
               	try {
@@ -54,7 +54,9 @@ public class Main extends ListenerAdapter {
               }
         }
     }
+
     public static void startBot() {
+    	MessageListener.loadUserData();
     	@SuppressWarnings("unused")
 		JDA jda = JDABuilder.createDefault(token)
                 .addEventListeners(new MessageListener())
@@ -67,6 +69,7 @@ public class Main extends ListenerAdapter {
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .build();
     
+    	Runtime.getRuntime().addShutdownHook(new Thread(() -> MessageListener.saveUserData()));
     
     }
 }

@@ -33,26 +33,22 @@ public class MessageListener extends ListenerAdapter{
 	
 	@Override
     public void onMessageReceived(MessageReceivedEvent event) {
-		loadUserData();
 		  if (serverDataMap == null) {
               serverDataMap = new LinkedHashMap<>();
           }
-		  
-		
-		if (event.getAuthor().isBot()) return;
-		
+		  	if (!event.isFromGuild()) return;
+		  if (event.getAuthor().isBot()) return;
 		content = event.getMessage().getContentRaw();
-		
-		if (!event.isFromGuild()) return;
-		
+		par = content.split("\\s+");
 		
 		String serverId = event.getGuild().getId();
 		this.serverData = serverDataMap.get(serverId);
 		if (serverData == null) {
 		serverDataMap.putIfAbsent(serverId, new ServerData(serverId));
 		this.serverData = serverDataMap.get(serverId);}
-		par = content.split("\\s+");
-		
+		 String command = par[0];
+		if (!command.contains(serverData.prefix))
+    	   return;
 		
 		boolean A = false;
         targetMember = par.length > 1 ? Misc.extractMemberFromMention(par[1], event) : null;
@@ -68,9 +64,8 @@ public class MessageListener extends ListenerAdapter{
         
         }
       ;
-      String command = par[0]; 
-      if (!command.contains(serverData.prefix))
-    	   return;
+      
+      
         characterData = Misc.characterCheck(content,targetMember, event, serverData, this);
         if (characterData == null) {
         	Misc.sm("could not find character", event);
@@ -110,7 +105,7 @@ public class MessageListener extends ListenerAdapter{
         	}
         	if (command.equals("avatar")) {
         		CharacterData.avatar(characterData, event);
-        	}
+        	} 
         	if (command.equals("adddata")) {
         		content = content.toLowerCase();
         		boolean pass = false;
@@ -320,7 +315,7 @@ public class MessageListener extends ListenerAdapter{
        
         	}
         
-        	//saveUserData();
+        	saveUserData();
         
         
 	

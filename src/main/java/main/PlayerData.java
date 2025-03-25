@@ -99,7 +99,7 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
         characterData = playerData.characterData.get(Integer.valueOf(matcher.group(1).trim())-1);
        
           
-	 }else  characterData = playerData.characterData.get(0);}
+	 }}else if (!text.contains("Basic Information") && !text.contains("Character Name")&&playerData.characterData.size()>0){ characterData = playerData.characterData.get(0);}
 		 if (characterData==null) {
         	characterData = new CharacterData(playerData.UserId, serverData);
         	playerData.characterData.add(characterData);
@@ -125,9 +125,9 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
 	         Matcher matcher = pattern.matcher(text);
 	         if (matcher.find()) {  // Find the first match
 	             if (cdata.toLowerCase().contains("name")) {
-	    		characterData.name=matcher.group(1);
+	    		characterData.name=matcher.group(1).trim();
 	    	}
-	             characterData.Cdata.put(cdata,matcher.group(1));
+	             characterData.Cdata.put(cdata,matcher.group(1).trim());
 	    }
 	    }
 	    if (!playerData.characterData.contains(characterData)) {
@@ -141,8 +141,8 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
 	         if (matcher.find()) {  // Find the first match
 	             // Extract the number from the capturing group
 	           abilityName = matcher.group(1);
-	        text.replace(abilityType + ":", "");
-	        text.replace(abilityName, "");
+	        text = text.replace(abilityType + ":", "");
+	        text = text.replace(abilityName, "");
 	       
 	           characterData.abilities.put(abilityName, text); 
 	          

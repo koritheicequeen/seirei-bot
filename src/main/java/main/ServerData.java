@@ -69,8 +69,9 @@ PlayerData deletedCharacterHolder;
 		
 	}
 	void abilityNameChange (String name, MessageReceivedEvent event) {
+		if (!this.abilityName.contains(name)) {
 		this.abilityName.add((name));
-		Misc.sm(name + " has been added", event);
+		Misc.sm(name + " has been added", event);}
 	}
 	void changeRole (String rolename, MessageReceivedEvent event, ServerData serverData, Guild server) {
 		List<Role> roles = server.getRolesByName(rolename, true);

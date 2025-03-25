@@ -234,6 +234,9 @@ public class CharacterData {
 		  
 		    }
 	   }
+	 void rename (CharacterData characterData, String text) {
+		 characterData.name = text;
+	 }
 	  static String getAllStats(CharacterData characterData, ServerData serverData, PlayerData playerData) throws ScriptException {
 		
 		   StringBuilder message = new StringBuilder();
