@@ -65,9 +65,6 @@ PlayerData deletedCharacterHolder;
 		this.deletedCharacterHolder = new PlayerData("0");
 
 	}
-	void viewDeleted () {
-		
-	}
 	void abilityNameChange (String name, MessageReceivedEvent event) {
 		if (!this.abilityName.contains(name)) {
 		this.abilityName.add((name));

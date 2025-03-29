@@ -4,6 +4,7 @@ package main;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,7 +46,7 @@ public class EconomicData {
 		Misc.sm("currency had been updated", event);
 	}
 	static void enable (String type, boolean check, MessageReceivedEvent event, ServerData serverData) {
-		
+		type = type.toLowerCase();
 		if (type.equals("work")) {
 			serverData.economicData.work = check;
 		} else
@@ -75,6 +76,15 @@ public class EconomicData {
 		} else
 		if (type.contains("start")) {
 			serverData.economicData.startingCurrency = Num;
+			
+			if (Num>serverData.economicData.startingCurrency) {
+				int added = Num - serverData.economicData.startingCurrency;
+			
+			for (Entry<String, PlayerData> playerData : serverData.playerDatas.entrySet()) {
+				for (CharacterData characterData : playerData.getValue().characterData) {
+					characterData.currency+=added;
+				}
+			}}
 		} else {
 			event.getChannel().sendMessage("Please specify a proper target").queue();
 		}

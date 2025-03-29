@@ -44,7 +44,7 @@ void viewAllStats(MessageReceivedEvent event, PlayerData playerData, ServerData 
 	 if (characterData.Avatar!=null && !characterData.Avatar.isEmpty()) {
      	try (InputStream is = ImageClass.downloadImage(characterData.Avatar)) {
              if (is != null) {
-            	 event.getChannel().sendMessageEmbeds(Misc.createEmbed(characterData.name + "'s Stats", pages.get(playerData.selectedChar)))
+            	 event.getChannel().sendMessageEmbeds(Misc.createEmbed(characterData.name + "'s Stats", pages.get(playerData.characterData.indexOf(characterData))))
             	    .setActionRow(buttons)
             	    .queue(); // Delete the first message (embed-only)
             	 Message message = event.getChannel().sendMessage("")
@@ -61,7 +61,7 @@ void viewAllStats(MessageReceivedEvent event, PlayerData playerData, ServerData 
              e.printStackTrace();
 	
      	   }
-	 } else event.getChannel().sendMessageEmbeds(Misc.createEmbed(characterData +"'s Stats", pages.get(playerData.selectedChar))).setActionRow(buttons).queue();
+	 } else event.getChannel().sendMessageEmbeds(Misc.createEmbed(characterData +"'s Stats", pages.get(playerData.characterData.indexOf(characterData)))).setActionRow(buttons).queue();
 	 
 }
 static void characterApproval( MessageReceivedEvent event, ServerData serverData) {
@@ -83,7 +83,7 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
 		playerData = new PlayerData(repliedMessage.getAuthor().getId());
 		serverData.playerDatas.put(repliedMessage.getAuthor().getId(), playerData);
 	}
-	playerData.characterData.removeIf(characterData -> characterData.name.contains("no name")||characterData.name == null || !characterData.name.matches(".*[a-zA-Z].*"));
+	playerData.characterData.removeIf(characterData -> characterData.name.contains("no name")||characterData.name == null || !characterData.name.matches(".*[a-zA-Z].*")||!characterData.name.contains("main.CharacterData@"));
 	if (playerData.characterData.size()>= serverData.CharacterCap &&!Misc.isModerator(repliedMessage.getMember().getId(), repliedMessage.getMember(), serverData)) {
 		Misc.sm("Please delete a character first", event);
 	}
@@ -100,9 +100,10 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
        
           
 	 }}else if (!text.contains("Basic Information") && !text.contains("Character Name")&&playerData.characterData.size()>0){ characterData = playerData.characterData.get(0);}
-		 if (characterData==null) {
+		boolean New = false;
+	 if (characterData==null) {
         	characterData = new CharacterData(playerData.UserId, serverData);
-        	playerData.characterData.add(characterData);
+        	New = true;
         }
 		
 	    // Check if the message is a reply
@@ -149,6 +150,24 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
 	           
 	         }
 	    }}
+	    for (CharacterData characterdata : playerData.characterData) {
+	    	if (characterdata.name.equals(characterData.name)) {
+	    		for (Entry<String, String> entry : characterData.Cdata.entrySet()) {
+	    			if (entry.getValue()!=null)
+	    			characterdata.Cdata.put(entry.getKey(), entry.getValue());
+	    		}
+	    		for (Entry<String, Integer> entry : characterData.stats.entrySet()) {
+	    			if (entry.getValue()!=null || entry.getValue()!=0) {
+	    				characterdata.stats.put(entry.getKey(), entry.getValue());
+	    			}
+	    		characterData.currency=characterdata.currency;
+	    		characterData.EXP=characterdata.EXP;
+	    		characterdata = characterData;
+	    		}
+	    	}
+	    	
+	    }
+	    if (New) {playerData.characterData.add(characterData);}
 	    StringBuilder send = new StringBuilder();
 	    send.append("Approval has been confirmed");
 	   if (ImageClass.avatarRetrieval(repliedMessage, event, characterData)) {
@@ -160,8 +179,9 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
 }
 static void characterDelete(CharacterData characterData, MessageReceivedEvent event, ServerData serverData, PlayerData playerData, boolean terminate) {
 characterData.creatorData=playerData;
-	playerData.characterData.remove(characterData);
-		serverData.deletedCharacterHolder.characterData.add(characterData);
+serverData.deletedCharacterHolder.characterData.add(characterData);
+playerData.characterData.remove(characterData);
+		
 if (terminate) {
 	characterData.terminated=true;
 }
@@ -181,7 +201,7 @@ static void characterRecovery(String name, PlayerData playerData, ServerData ser
 }
 static void DelCharView(ServerData serverData, MessageReceivedEvent event) {
 	if (serverData.deletedCharacterHolder.characterData.size()>0) {
-	serverData.deletedCharacterHolder.viewAllStats(event, serverData.deletedCharacterHolder, serverData, serverData.deletedCharacterHolder.characterData.get(serverData.deletedCharacterHolder.selectedChar));}
+	serverData.deletedCharacterHolder.viewAllStats(event, serverData.deletedCharacterHolder, serverData, serverData.deletedCharacterHolder.characterData.get(0));}
 	else Misc.sm("No character has been deleted", event);
 }
 static void clear(PlayerData playerData, ServerData serverData, MessageReceivedEvent event) {

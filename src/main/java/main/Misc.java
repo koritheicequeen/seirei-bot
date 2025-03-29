@@ -119,7 +119,6 @@ public class Misc {
 	                	Misc.sm("Please select a valid character", event);
 	                	return null;
 	                }
-	            System.out.println(characterData + "correct");
 	        }}return characterData;
 	}
 	public static Integer calculateLevel(ServerData serverData, Integer levelcap) {

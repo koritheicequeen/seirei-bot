@@ -40,7 +40,8 @@ public class Main extends ListenerAdapter {
         
         logger.info("Token successfully retrieved");
       startBot();
-      
+
+  	MessageListener.loadUserData();
 
     }
     @Override
@@ -86,22 +87,25 @@ public class Main extends ListenerAdapter {
     }
 
     public static void startBot() {
-    	MessageListener.loadUserData();
     	if (jda != null) jda.shutdownNow();
        
 		jda = JDABuilder.createDefault(token)
                 .addEventListeners(new MessageListener())
                 .addEventListeners(new ButtonListener())
     			.addEventListeners( new Main())
-                .setChunkingFilter(ChunkingFilter.ALL) // enable member chunking for all guilds
+                .setChunkingFilter(ChunkingFilter.ALL) 
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .setAutoReconnect(false)
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .build();
     
-    	Runtime.getRuntime().addShutdownHook(new Thread(() -> MessageListener.saveUserData()));
-    
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+		    MessageListener.saveUserData();
+		    try {
+		        Thread.sleep(500); // Wait to ensure file writes complete
+		    } catch (InterruptedException ignored) {}
+		}));
     }
 }
 

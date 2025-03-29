@@ -39,7 +39,7 @@ public class ButtonListener extends ListenerAdapter{
 	    	return;
 	    }
 	    String[] parts = buttonId.trim().split("\\s+");
-	    PlayerData playerData = serverdata.playerDatas.get(userID);
+	    PlayerData playerData = serverdata.playerDatas.get(parts[0]);
 	
 	    
 	    switch (parts[1]) {

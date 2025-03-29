@@ -31,11 +31,14 @@ public class CharacterData {
 	   PlayerData creatorData;
 	   List<Entry<String,String>> pages;
 	   int pagecount;
+	   List<ItemData> itemDatas;
 	   
-	   public CharacterData(String name, ServerData serverData) {
+	   public CharacterData(String playerID, ServerData serverData) {
+		   this.itemDatas = new ArrayList<>();
 		   this.pagecount = 0;
 		   this.pages = new ArrayList<>();
-		   this.name = name;
+		   this.name = null;
+		   this.userId=playerID;
 		   terminated = false;
 		   this.stats = new LinkedHashMap<>();  
 		   this.stats.put("Total HP", 0);
@@ -125,24 +128,27 @@ public class CharacterData {
 			Misc.sm(amount + " has been sent", event);
 		} else Misc.sm("You do not have enough to complete this transaction", event);
 	  }
-	  static void select (int num, PlayerData playerData) {
+	  static void select (int num, PlayerData playerData, MessageReceivedEvent event) {
 		 playerData.selectedChar = num-1; 
+		 Misc.sm(num + " has been selected", event);
 		 
 	  }
-	  static void addLevelup (CharacterData characterData, String num) {
+	  static void addLevelup (CharacterData characterData, String num, MessageReceivedEvent event) {
 		  characterData.levelUpPoints+=Integer.valueOf(num.trim());
+		  Misc.sm(num + " has been added", event);
 	  }
-	  static void allocate (CharacterData characterData, ServerData serverData, String text, PlayerData playerData) {
+	  static void allocate (CharacterData characterData, ServerData serverData, String text, PlayerData playerData, MessageReceivedEvent event) {
 		  for (String stat : serverData.stats) {
 		    	 String regex = Misc.capitalize(stat) + "\\s*(\\d+)";
 		         Pattern pattern = Pattern.compile(regex);
 		         Matcher matcher = pattern.matcher(text);
 		         if (matcher.find()) {  // Find the first match
 		             // Extract the number from the capturing group
-		        	 if (Integer.valueOf(matcher.group(1))<characterData.levelUpPoints) {
+		        	 if (Integer.valueOf(matcher.group(1))<=characterData.levelUpPoints) {
 		             characterData.stats.put(stat, Integer.valueOf(matcher.group(1).trim())+characterData.stats.get(stat));
 		             characterData.levelUpPoints -= Integer.valueOf(matcher.group(1).trim());
-		        	 }
+		             Misc.sm(stat +" have been updated", event);
+		        	 }else Misc.sm(stat + " failed to update", event);
 		        	 try {
 						calculateLevel(serverData, characterData, playerData);
 					} catch (ScriptException e) {
@@ -234,7 +240,8 @@ public class CharacterData {
 		  
 		    }
 	   }
-	 void rename (CharacterData characterData, String text) {
+	 void rename (CharacterData characterData, String text, MessageReceivedEvent event, ServerData serverData) {
+		
 		 characterData.name = text;
 	 }
 	  static String getAllStats(CharacterData characterData, ServerData serverData, PlayerData playerData) throws ScriptException {

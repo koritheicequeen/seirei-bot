@@ -5,12 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -29,7 +27,7 @@ public class MessageListener extends ListenerAdapter{
 	Member targetMember;
 		String content;
 		String[] par;
-		List<String> parts = new ArrayList<>();
+		List<String> parts;
 		String targetMemberId;
 		PlayerData playerData;
 		CharacterData characterData;
@@ -40,6 +38,7 @@ public class MessageListener extends ListenerAdapter{
 		  if (serverDataMap == null) {
               serverDataMap = new LinkedHashMap<>();
           }
+		  
 		  	if (!event.isFromGuild()) return;
 		  if (event.getAuthor().isBot()) return;
 		content = event.getMessage().getContentRaw();
@@ -69,12 +68,12 @@ public class MessageListener extends ListenerAdapter{
         }
       ;
       
-      
         characterData = Misc.characterCheck(content,targetMember, event, serverData, this);
         if (characterData == null) {
         	Misc.sm("could not find character", event);
         	return;
         }
+        this.parts=new ArrayList<>();
        for (String part : par) {
     	   if (!part.contains("@")&&!part.contains(serverData.prefix)) {
     		  parts.add(part);
@@ -92,8 +91,9 @@ public class MessageListener extends ListenerAdapter{
         	moderator = true;
         }
         String trueCommand = command.replace(serverData.prefix, "");
-      
+     
     if (moderator ||!serverData.lockedCommands.contains(trueCommand)) {
+    	System.out.println(command);
         if (serverData.dice) {
         	if ((command.equals("roll") || command.equals("r"))) {//&& serverData.dice
         		diceroller.rollprocessorNew(content.toLowerCase(), event, characterData, serverData, targetMember);
@@ -125,6 +125,7 @@ public class MessageListener extends ListenerAdapter{
         		PlayerData.characterApproval(event, serverData);
         	}
            	if (command.equals("stats") &&(!A ||Misc.isModerator(self.getId(), self, serverData))) {
+           	
         		playerData.viewAllStats(event, playerData, serverData, characterData);
            	}
            	if (command.equals("delete")&&(!A ||Misc.isModerator(self.getId(), self, serverData))) {
@@ -144,19 +145,19 @@ public class MessageListener extends ListenerAdapter{
            		PlayerData.DelCharView(serverData, event);
            	}
            if (command.equals("select")&&(!A)) {
-        	   CharacterData.select(Integer.valueOf(parts.get(0)), playerData);
+        	   CharacterData.select(Integer.valueOf(parts.get(0)), playerData, event);
            }
-           if (command.equals("addLevelUp")&&(Misc.isModerator(self.getId(), self, serverData))) {
+           if (command.equals("addlevelup")&&(Misc.isModerator(self.getId(), self, serverData))) {
         	   if (!A) {
           			Misc.sm("Please mention a user", event);
           			return;
           		}
-        	   CharacterData.select(Integer.valueOf(parts.get(0)), playerData);
+        	   CharacterData.addLevelup(characterData, parts.get(0), event);
            }
            if (command.equals("allocate")&&(!A)) {
-        	   CharacterData.allocate(characterData, serverData, content, playerData);
+        	   CharacterData.allocate(characterData, serverData, content, playerData, event);
            }
-           if (command.equals("setStats")&&(Misc.isModerator(self.getId(), self, serverData))) {
+           if (command.equals("setstats")&&(Misc.isModerator(self.getId(), self, serverData))) {
         	   if (!A) {
           			Misc.sm("Please mention a user", event);
           			return;
@@ -185,15 +186,25 @@ public class MessageListener extends ListenerAdapter{
            }
           if (command.equals("id")) {
         	  if (parts.get(0).equals("1")){
-        	ImageClass.IdCard1(event);
-        	  }if (parts.get(0).equals("2")) {
-        		  ImageClass.IdCard2(event);
-        	  }
+        	try {
+				ImageClass.IdCard1(event, characterData, serverData, playerData);
+			} catch (IOException e) {
+			
+				e.printStackTrace();
+			}
+        	  }else if (parts.get(0).equals("2")) {
+        		  try {
+					ImageClass.IdCard2(event, playerData, characterData, serverData);
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
+        	  }else 
         	  if (parts.get(0).equals("3")) {
-        	  ImageClass.IdCard3(event);
+        	  ImageClass.IdCard3(event, characterData, serverData);
         	  }else if (parts.get(0).equals("4")) {
-        	  ImageClass.IDcard4(event, characterData);
-          }}
+        	  ImageClass.IDcard4(event, characterData, serverData);
+          }else Misc.sm("could not find the matching ID", event);}
         }
         if (serverData.econ) {
         	if (command.equals("work")&&(!A ||Misc.isModerator(self.getId(), self, serverData))) {
@@ -336,8 +347,7 @@ public class MessageListener extends ListenerAdapter{
 	 static void loadUserData() {
 		    try (FileReader reader = new FileReader(DATA_FILE)) {
 		      
-		    	//Type userDataType = new TypeToken<Map<String, ServerData>>() {}.getType();
-		    	System.out.println("raw json \n" + reader);
+		    
 		    	Gson gson = new GsonBuilder()
 		    		    .registerTypeAdapter(Map.Entry.class, new MapEntryAdapter())
 		    		    .create();
@@ -370,23 +380,5 @@ public class MessageListener extends ListenerAdapter{
 		}}
 
 	 
-//	  static void loadUserData() {
-//	        try (FileReader reader = new FileReader(DATA_FILE)) {
-//	            Type userDataType = new TypeToken<Map<String, ServerData>>() {}.getType();
-//	            Gson gson = new GsonBuilder()
-//	                    .serializeNulls()  // Optional: include nulls in the serialized output
-//	                    .create();
-//	            serverDataMap = gson.fromJson(reader, userDataType);
-//	            
-//	            if (serverDataMap == null) {
-//	                serverDataMap = new LinkedHashMap<>();
-//	            }
-//	        } catch (IOException e) {
-//	            serverDataMap = new LinkedHashMap<>();
-//	            
-//	            e.printStackTrace();
-//	        }
-//	  }
-
 	 
 
