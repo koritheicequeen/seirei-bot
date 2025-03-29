@@ -3,6 +3,9 @@ package main;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.imageio.spi.IIORegistry;
 import javax.security.auth.login.LoginException;
@@ -42,7 +45,15 @@ public class Main extends ListenerAdapter {
       startBot();
 
   	MessageListener.loadUserData();
+    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+  	 Runnable task = () -> {
+       
+         MessageListener.saveUserData();  // Call your method here
+     };
 
+     // Schedule the task to run every 5 hours
+     scheduler.scheduleAtFixedRate(task, 0, 5, TimeUnit.HOURS);
+ 
     }
     @Override
   
@@ -99,7 +110,7 @@ public class Main extends ListenerAdapter {
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .build();
-    
+		
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 		    MessageListener.saveUserData();
 		    try {

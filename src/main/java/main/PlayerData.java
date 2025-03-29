@@ -83,7 +83,7 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
 		playerData = new PlayerData(repliedMessage.getAuthor().getId());
 		serverData.playerDatas.put(repliedMessage.getAuthor().getId(), playerData);
 	}
-	playerData.characterData.removeIf(characterData -> characterData.name.contains("no name")||characterData.name == null || !characterData.name.matches(".*[a-zA-Z].*")||!characterData.name.contains("main.CharacterData@"));
+	playerData.characterData.removeIf(characterData -> characterData.name == null ||characterData.name.contains("no name")|| !characterData.name.matches(".*[a-zA-Z].*")||!characterData.name.contains("main.CharacterData@"));
 	if (playerData.characterData.size()>= serverData.CharacterCap &&!Misc.isModerator(repliedMessage.getMember().getId(), repliedMessage.getMember(), serverData)) {
 		Misc.sm("Please delete a character first", event);
 	}
@@ -99,7 +99,7 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
         characterData = playerData.characterData.get(Integer.valueOf(matcher.group(1).trim())-1);
        
           
-	 }}else if (!text.contains("Basic Information") && !text.contains("Character Name")&&playerData.characterData.size()>0){ characterData = playerData.characterData.get(0);}
+	 }}else if (!text.contains("Basic Information") && (!text.contains("Character Name")||!text.contains("Real Name"))&&playerData.characterData.size()>0){ characterData = playerData.characterData.get(playerData.selectedChar-1);}
 		boolean New = false;
 	 if (characterData==null) {
         	characterData = new CharacterData(playerData.UserId, serverData);
@@ -131,8 +131,6 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
 	             characterData.Cdata.put(cdata,matcher.group(1).trim());
 	    }
 	    }
-	    if (!playerData.characterData.contains(characterData)) {
-	    playerData.characterData.add(characterData);}
 	    if (serverData.abilityName!=null) {
 	    for (String abilityType : serverData.abilityName) {
 	    	String abilityName = null;
@@ -167,7 +165,17 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
 	    	}
 	    	
 	    }
-	    if (New) {playerData.characterData.add(characterData);}
+	    if (New) {
+	        playerData.characterData.add(characterData); // Ensure it's appended properly
+	    } else {
+	        // Find the index of the existing character and update in place
+	        for (int i = 0; i < playerData.characterData.size(); i++) {
+	            if (playerData.characterData.get(i).name.equals(characterData.name)) {
+	                playerData.characterData.set(i, characterData);
+	                break;
+	            }
+	        }
+	    }
 	    StringBuilder send = new StringBuilder();
 	    send.append("Approval has been confirmed");
 	   if (ImageClass.avatarRetrieval(repliedMessage, event, characterData)) {
