@@ -107,10 +107,10 @@ public class MessageListener extends ListenerAdapter{
         	if (command.equals("heal")) {
         		CharacterData.modifystats(characterData, "Current HP: "+Integer.valueOf(characterData.stats.get("Current HP") + Integer.valueOf(parts.get(0))).toString(), serverData, event, playerData);
         	}
-        	if (command.equals("avatar")) {
+        	if (command.equals("avatar") &&(!A ||Misc.isModerator(self.getId(), self, serverData))) {
         		CharacterData.avatar(characterData, event);
         	} 
-        	if (command.equals("adddata")) {
+        	if (command.equals("adddata")&&(!A ||Misc.isModerator(self.getId(), self, serverData))) {
         		content = content.toLowerCase();
         		boolean pass = false;
         		for (String cdata : serverData.cData) {

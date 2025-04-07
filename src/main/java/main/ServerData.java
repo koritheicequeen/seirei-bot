@@ -192,6 +192,7 @@ PlayerData deletedCharacterHolder;
 		} else if (modify.equals("prefix")) {
 			this.prefix = number;
 		}
+		Misc.sm(modify + " has been updated", event);
 	}
 	void lockCommands (String command, MessageReceivedEvent event) {
 		command = command.replace(prefix, "").toLowerCase();

@@ -138,30 +138,43 @@ public class CharacterData {
 		  Misc.sm(num + " has been added", event);
 	  }
 	  static void allocate (CharacterData characterData, ServerData serverData, String text, PlayerData playerData, MessageReceivedEvent event) {
-		  for (String stat : serverData.stats) {
-		    	 String regex = Misc.capitalize(stat) + "\\s*(\\d+)";
-		         Pattern pattern = Pattern.compile(regex);
-		         Matcher matcher = pattern.matcher(text);
-		         if (matcher.find()) {  // Find the first match
-		             // Extract the number from the capturing group
-		        	 if (Integer.valueOf(matcher.group(1))<=characterData.levelUpPoints) {
-		             characterData.stats.put(stat, Integer.valueOf(matcher.group(1).trim())+characterData.stats.get(stat));
-		             characterData.levelUpPoints -= Integer.valueOf(matcher.group(1).trim());
-		             Misc.sm(stat +" have been updated", event);
-		        	 }else Misc.sm(stat + " failed to update", event);
-		        	 try {
-						calculateLevel(serverData, characterData, playerData);
-					} catch (ScriptException e) {
-						
-						e.printStackTrace();
-					}
-		        	 calculateHP(characterData, serverData);
-		    }
-		   
-		}
+		  Pattern pattern = Pattern.compile("([A-Za-z]+)\\s*(\\d+)", Pattern.CASE_INSENSITIVE);
+		  Matcher matcher = pattern.matcher(text);
+
+		  while (matcher.find()) {
+		      String statName =Misc.capitalize(matcher.group(1).trim());
+		      int value = Integer.parseInt(matcher.group(2).trim());
+
+		      if (serverData.stats.contains(statName) || serverData.abbrev.containsKey(statName.toUpperCase())) {
+		    	  if (serverData.abbrev.containsKey(statName.toUpperCase())) {
+		    		  statName = serverData.abbrev.get(statName.toUpperCase());
+		    	  }
+		          if (value <= characterData.levelUpPoints) {
+		              String lowerStat = statName.toLowerCase(); // or adjust as needed
+		              characterData.stats.put(lowerStat, value + characterData.stats.get(lowerStat));
+		              characterData.levelUpPoints -= value;
+		              Misc.sm(statName + " has been updated", event);
+		          } else {
+		              Misc.sm(statName + " failed to update", event);
+		          }
+
+		         
+		      }else   Misc.sm(statName + " failed to update", event);
+		  }
+		  try {
+              calculateLevel(serverData, characterData, playerData);
+          } catch (ScriptException e) {
+              e.printStackTrace();
+          }
+         
+		  calculateHP(characterData, serverData);
 	  }
 	 static void calculateLevel(ServerData serverData, CharacterData characterData,PlayerData playerData)  throws ScriptException  {
+	int level = characterData.Level;
 	characterData.Level= Misc.currentLevel(serverData, characterData, playerData );
+	if (level != characterData.Level) {
+		characterData.levelUpPoints= (characterData.Level-level)*serverData.levelUpPoints;
+	}
 		    }
 	static void calculateHP (CharacterData characterData, ServerData serverData) {
 		 if (characterData.stats.get("Total HP")!=characterData.stats.get(serverData.healthDerivitive)*serverData.healthMultiplier) {
@@ -174,7 +187,6 @@ public class CharacterData {
 		
 		 content = content.toLowerCase();
 		 for (String stat : serverData.stats) {
-			 System.out.println(stat);
 	    	 String regex = (stat.toLowerCase()) + ".*?:\\s*(\\d+)";
 	         Pattern pattern = Pattern.compile(regex);
 	         Matcher matcher = pattern.matcher(content);
@@ -220,7 +232,6 @@ public class CharacterData {
 					pages.add(entry);
 				}
 					
-			//TODO buttons
 			List<Button> buttons = ButtonListener.turnPageAbility(playerData);
 			event.getChannel().sendMessageEmbeds(Misc.createEmbed(pages.get(0).getKey(), pages.get(0).getValue())).setActionRow(buttons).queue();
 		             
@@ -297,7 +308,7 @@ public class CharacterData {
 		        characterData = playerData.characterData.get(Integer.valueOf(matcher.group(1).trim())-1);
 		       
 		          
-			 } }
+			 } else {Misc.sm("Please specify a character number", event); return;} }
 			 Integer reqAmount = null;
 			 if (content.toLowerCase().contains("amount:")) {
 				 String regex = ("amount" + ".*?:\\s*(\\d+)");

@@ -61,7 +61,7 @@ void viewAllStats(MessageReceivedEvent event, PlayerData playerData, ServerData 
              e.printStackTrace();
 	
      	   }
-	 } else event.getChannel().sendMessageEmbeds(Misc.createEmbed(characterData +"'s Stats", pages.get(playerData.characterData.indexOf(characterData)))).setActionRow(buttons).queue();
+	 } else event.getChannel().sendMessageEmbeds(Misc.createEmbed(characterData.name +"'s Stats", pages.get(playerData.characterData.indexOf(characterData)))).setActionRow(buttons).queue();
 	 
 }
 static void characterApproval( MessageReceivedEvent event, ServerData serverData) {
@@ -83,7 +83,14 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
 		playerData = new PlayerData(repliedMessage.getAuthor().getId());
 		serverData.playerDatas.put(repliedMessage.getAuthor().getId(), playerData);
 	}
-	playerData.characterData.removeIf(characterData -> characterData.name == null ||characterData.name.contains("no name")|| !characterData.name.matches(".*[a-zA-Z].*")||!characterData.name.contains("main.CharacterData@"));
+	
+
+	playerData.characterData.removeIf(characterData -> {
+	    // Checks for invalid names or default state, can add more checks here
+	    return characterData.name == null || 
+	           characterData.name.contains("no name")|| 
+	           characterData.name.contains("main.CharacterData@");
+	});
 	if (playerData.characterData.size()>= serverData.CharacterCap &&!Misc.isModerator(repliedMessage.getMember().getId(), repliedMessage.getMember(), serverData)) {
 		Misc.sm("Please delete a character first", event);
 	}
@@ -99,7 +106,7 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
         characterData = playerData.characterData.get(Integer.valueOf(matcher.group(1).trim())-1);
        
           
-	 }}else if (!text.contains("Basic Information") && (!text.contains("Character Name")||!text.contains("Real Name"))&&playerData.characterData.size()>0){ characterData = playerData.characterData.get(playerData.selectedChar-1);}
+	 }else if (!text.contains("Basic Information") && (!text.contains("Character Name")||!text.contains("Real Name"))&&playerData.characterData.size()>0){ characterData = playerData.characterData.get(playerData.selectedChar-1);}}else if (!text.contains("Basic Information") && (!text.contains("Character Name")||!text.contains("Real Name"))&&playerData.characterData.size()>0){ characterData = playerData.characterData.get(playerData.selectedChar-1);}
 		boolean New = false;
 	 if (characterData==null) {
         	characterData = new CharacterData(playerData.UserId, serverData);
@@ -148,34 +155,36 @@ static void characterApproval( MessageReceivedEvent event, ServerData serverData
 	           
 	         }
 	    }}
-	    for (CharacterData characterdata : playerData.characterData) {
-	    	if (characterdata.name.equals(characterData.name)) {
-	    		for (Entry<String, String> entry : characterData.Cdata.entrySet()) {
-	    			if (entry.getValue()!=null)
-	    			characterdata.Cdata.put(entry.getKey(), entry.getValue());
-	    		}
-	    		for (Entry<String, Integer> entry : characterData.stats.entrySet()) {
-	    			if (entry.getValue()!=null || entry.getValue()!=0) {
-	    				characterdata.stats.put(entry.getKey(), entry.getValue());
-	    			}
-	    		characterData.currency=characterdata.currency;
-	    		characterData.EXP=characterdata.EXP;
-	    		characterdata = characterData;
-	    		}
-	    	}
-	    	
-	    }
-	    if (New) {
-	        playerData.characterData.add(characterData); // Ensure it's appended properly
-	    } else {
-	        // Find the index of the existing character and update in place
-	        for (int i = 0; i < playerData.characterData.size(); i++) {
-	            if (playerData.characterData.get(i).name.equals(characterData.name)) {
-	                playerData.characterData.set(i, characterData);
-	                break;
+	    boolean found = false;
+	    for (int i = 0; i < playerData.characterData.size(); i++) {
+	        CharacterData characterdata = playerData.characterData.get(i);
+	        if (characterdata.name.equals(characterData.name)) {
+	            // Update existing character data instead of replacing the reference
+	            for (Entry<String, String> entry : characterData.Cdata.entrySet()) {
+	                if (entry.getValue() != null)
+	                    characterdata.Cdata.put(entry.getKey(), entry.getValue());
 	            }
+	            for (Entry<String, Integer> entry : characterData.stats.entrySet()) {
+	                if (entry.getValue() != null && entry.getValue() != 0) {
+	                    characterdata.stats.put(entry.getKey(), entry.getValue());
+	                }
+	            }
+	            characterdata.currency = characterData.currency;
+	            characterdata.EXP = characterData.EXP;
+
+	            // Set the updated character back in the list
+	            playerData.characterData.set(i, characterdata);
+
+	            found = true;  // Mark that the character was found and updated
+	            break;
 	        }
 	    }
+
+	    if (!found) { // If no character was found, add a new one
+	        playerData.characterData.add(characterData);
+	    } else if (New) {
+	        playerData.characterData.add(characterData); // Ensure it's appended properly
+	    } 
 	    StringBuilder send = new StringBuilder();
 	    send.append("Approval has been confirmed");
 	   if (ImageClass.avatarRetrieval(repliedMessage, event, characterData)) {
