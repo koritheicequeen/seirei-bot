@@ -169,8 +169,8 @@ public class MessageListener extends ListenerAdapter{
            }
            if (command.equals("addexp")) {
         	   if (parts.size()>0) {
-        	   CharacterData.addexp(playerData, event,Integer.valueOf(parts.get(0)), serverData);}
-        	   else CharacterData.addexp(playerData, event,null, serverData);
+        	   CharacterData.addexp(event,Integer.valueOf(parts.get(0)), serverData);}
+        	   else CharacterData.addexp(event,null, serverData);
            }
            if (command.equals("changecharacter")&&(!A ||Misc.isModerator(self.getId(), self, serverData))) {
         	   CharacterData.characterModification(characterData, event, content, serverData);

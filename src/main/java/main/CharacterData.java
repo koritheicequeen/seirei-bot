@@ -288,7 +288,7 @@ public class CharacterData {
 			   Misc.sm("Avatar has been saved!", event);
 		   } else Misc.sm("Failure to add Avatar", event);
 	  }
-	  static void addexp (PlayerData playerData, MessageReceivedEvent event, Integer amount, ServerData serverData) {
+	  static void addexp (MessageReceivedEvent event, Integer amount, ServerData serverData) {
 		  Message message = event.getMessage();
 			Message repliedMessage = null;
 			String content = null;
@@ -296,6 +296,7 @@ public class CharacterData {
 			        repliedMessage = message.getReferencedMessage();
 			       content = repliedMessage.getContentRaw();
 			    } else {Misc.sm("Please reply to a message",event); return;}
+			 PlayerData playerData = serverData.playerDatas.get(repliedMessage.getId());
 			 content = content.replaceAll("\\[.*?\\]", "");
 		  CharacterData characterData = null;
 			 if (content.toLowerCase().contains("character #:")) {
