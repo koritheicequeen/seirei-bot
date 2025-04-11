@@ -93,7 +93,6 @@ public class MessageListener extends ListenerAdapter{
         String trueCommand = command.replace(serverData.prefix, "");
      
     if (moderator ||!serverData.lockedCommands.contains(trueCommand)) {
-    	System.out.println(command);
         if (serverData.dice) {
         	if ((command.equals("roll") || command.equals("r"))) {//&& serverData.dice
         		diceroller.rollprocessorNew(content.toLowerCase(), event, characterData, serverData, targetMember);
@@ -255,80 +254,79 @@ public class MessageListener extends ListenerAdapter{
            		}
            		CharacterData.give(characterData, event, serverData,Integer.valueOf( parts.get(0)));
            	}
-        }
+        } else Misc.sm("Economy is disabled by server settings", event);
   
-       if (command.equals("serverstats")&& Misc.isModerator(self.getId(), self, serverData)) {
+         if (command.equals("serverstats")&& Misc.isModerator(self.getId(), self, serverData)) {
     	  if (segments.size()>1) {
     		  serverData.modifyStats(parts.get(0),segments.get(1) , event, serverData);
     	  }else serverData.modifyStats(parts.get(0), parts.get(1), event, serverData);
         		
-        }
+        }else
         if (command.equals("serverdata")&& Misc.isModerator(self.getId(), self, serverData)) {
         	  if (segments.size()>1) {
         		  serverData.modifyCData(parts.get(0),segments.get(1) , event, serverData);
         	  }else serverData.modifyStats(parts.get(0), parts.get(1), event, serverData);
         	  
-        } if (command.equals("abilityname")&&(Misc.isModerator(self.getId(), self, serverData))) {
+        }else if (command.equals("abilityname")&&(Misc.isModerator(self.getId(), self, serverData))) {
         	 if (segments.size()>1) {
         		 serverData.abilityNameChange(segments.get(1), event);
         	 }else 
         	serverData.abilityNameChange(parts.get(0), event);
-        }
+        }else
         if (command.equals("role")&& Misc.isModerator(self.getId(), self, serverData)) {
         	serverData.changeRole(segments.get(1), event, serverData, event.getGuild());
-        }
+        }else
         if (command.equals("viewstats")&& Misc.isModerator(self.getId(), self, serverData)) {
         	serverData.viewStats(serverData, event);
-        }
+        }else
         if (command.equals("viewdata")&&(Misc.isModerator(self.getId(), self, serverData))) {
         	serverData.viewCData(serverData, event);
-        }
+        }else
         if (command.equals("enable")&&(Misc.isModerator(self.getId(), self, serverData))) {
       
         	ServerData.enable(serverData, parts.get(0), event);
         }
         if (command.equals("disable")&&(Misc.isModerator(self.getId(), self, serverData))) {
         	serverData.disable(parts.get(0), event);
-        }
+        }else
         if (command.equals("levelstrat")&&(Misc.isModerator(self.getId(), self, serverData))) {
         	serverData.levelStrat(segments.get(1), event);
-        }
+        }else
         if (command.equals("modifydata")&&(Misc.isModerator(self.getId(), self, serverData))) {
         	serverData.handleNumberData(parts.get(0), parts.get(1), event);
-        }
+        }else
         if (command.equals("lock")&&(Misc.isModerator(self.getId(), self, serverData))) {
         	serverData.lockCommands(parts.get(0), event);
-        }
+        }else
         if (command.equals("abbrev")&&(Misc.isModerator(self.getId(), self, serverData))) {
         	serverData.addAbbrev(parts.get(0), parts.get(1), event);
-        }
+        }else
         if (command.equals("hpstat")&&(Misc.isModerator(self.getId(), self, serverData))) {
         	serverData.changeHealthDerivitive(parts.get(0), event);
-        }
+        }else
         if (command.equals("hpmulti")&&(Misc.isModerator(self.getId(), self, serverData))) {
         	serverData.changeMultiplier(Integer.valueOf(parts.get(0)), event);
-        }
+        }else
         if (command.equals("levelstat")&&(Misc.isModerator(self.getId(), self, serverData))) {
         	
         	serverData.levelUpStats(Misc.capitalize( parts.get(0)), Integer.valueOf(parts.get(1)), event);
-        }
+        }else
        if (command.equals("cdatasplit")&&(Misc.isModerator(self.getId(), self, serverData))) {
     	   serverData.cdataSplit(Integer.valueOf(parts.get(0)), event);
-       }
+       }else
        if (command.equals("playerclear")&&(Misc.isModerator(self.getId(), self, serverData))&&!A) {
     	   PlayerData.clear(playerData, serverData, event);
-       }
+       }else
        if (command.equals("serverclear")&&(Misc.isModerator(self.getId(), self, serverData))&&!A) {
     	   ServerData.clear(serverData, event);
-       }
+       }else
        if (command.equals("update")) {
     	   serverData.globalUpdate();
-       }
-       if (command.equals("image")) {            
+       }else if (command.equals("image")) {            
     	   System.out.println(ImageClass.imageRetrieval(event.getMessage(), event, characterData));
-       }
+       } 
        
-        	}
+        	}else Misc.sm("This command is locked or unavailable", event);
         
         
 	

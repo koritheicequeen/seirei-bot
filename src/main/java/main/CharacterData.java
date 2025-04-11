@@ -149,8 +149,12 @@ public class CharacterData {
 		    	  if (serverData.abbrev.containsKey(statName.toUpperCase())) {
 		    		  statName = serverData.abbrev.get(statName.toUpperCase());
 		    	  }
+		    	  if (serverData.levelUpStats.containsKey(Misc.capitalize(statName))) {
+		    		  Misc.sm("This stat cannot be increased this way", event);
+		    		  return;
+		    	  }
 		          if (value <= characterData.levelUpPoints) {
-		              String lowerStat = statName.toLowerCase(); // or adjust as needed
+		              String lowerStat = Misc.capitalize(statName); // or adjust as needed
 		              characterData.stats.put(lowerStat, value + characterData.stats.get(lowerStat));
 		              characterData.levelUpPoints -= value;
 		              Misc.sm(statName + " has been updated", event);
